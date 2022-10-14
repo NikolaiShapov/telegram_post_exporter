@@ -134,3 +134,4 @@ dmypy.json
 img_root/
 *.db
 *.session
+settings.py

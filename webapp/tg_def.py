@@ -1,7 +1,8 @@
 from telethon.sync import TelegramClient
 from telethon import functions, types
 from telethon.tl.patched import MessageService
-from webapp.config import API_ID, API_HASH, PATH_IMG
+from webapp.config import PATH_IMG
+from webapp.settings import API_HASH, API_ID
 from webapp.model import db, Post, Img
 import datetime, time
 import os
@@ -10,13 +11,16 @@ import os
 client = TelegramClient('+79811447016', API_ID, API_HASH)
 client.start()
 
-def parser_post_channel(list_id):
-    for id in list_id:
+def participants_count_Channel(id_Channel):
+    full_info = client(functions.channels.GetFullChannelRequest(channel=int(f'-100{id_Channel}')))
+    return(full_info.full_chat.participants_count) # количество подписчиков канала
+
+def parser_post_channel(list_id_Channel):
+    for id in list_id_Channel:
         messages = []
         grouped_id = []
         channel = client.get_entity(int(f'-100{id}')) # получаем канал по ID (к id канала надо дописать -100)
-        full_info = client(functions.channels.GetFullChannelRequest(channel=int(f'-100{id}')))
-        tg_participants_count = full_info.full_chat.participants_count # количество подписчиков канала
+        tg_participants_count = participants_count_Channel(id)
         for message in client.iter_messages(channel,limit=30):
             # print(message.stringify())
             if len(grouped_id) > 0 and isinstance(message, MessageService):
@@ -62,19 +66,34 @@ def loader_post(message, tg_participants_count, id):
         except AttributeError:
             if message.text == "":
                 return 'Это добавлять в БД не будем.'
-        new_post =Post(
-                channel_id = id,
-                tg_post_id = message.id,
-                tg_data_post = message.date.replace(tzinfo=None) + datetime.timedelta(hours=3), # Московское время,
-                tg_text_post = message.text,
-                tg_participants_count = tg_participants_count,
-                img_flag = img_flag)
+        new_post = create_new_post_one(id, message, tg_participants_count, img_flag)
         loader_post_db(new_post)
         if img_flag == True:
             new_img = Img(post_id = new_post.id, img_path = os.path.join(PATH_IMG, str(id), str(message.id)))
             loader_img_db(new_img)
         else:
             db.session.commit()
+
+def create_new_post_one(id, message, tg_participants_count, img_flag):
+    new_post =Post(
+            channel_id = id,
+            tg_post_id = message.id,
+            tg_data_post = message.date.replace(tzinfo=None) + datetime.timedelta(hours=3), # Московское время,
+            tg_text_post = message.text,
+            tg_participants_count = tg_participants_count,
+            img_flag = img_flag)
+    return new_post
+
+def create_new_post_all(id, messages, tg_participants_count, img_flag):
+    new_post =Post(
+            channel_id = id,
+            tg_post_id = messages[-1].id,
+            tg_data_post = messages[-1].date.replace(tzinfo=None) + datetime.timedelta(hours=3), # Московское время,
+            tg_text_post = messages[-1].text,
+            tg_participants_count = tg_participants_count,
+            img_flag = img_flag
+            )
+    return new_post
 
 def loader_posts(messages, tg_participants_count, id):
     double = db.session.query(Post).filter((Post.tg_post_id==messages[-1].id and Post.channel_id==id)).count()
@@ -90,14 +109,7 @@ def loader_posts(messages, tg_participants_count, id):
                 img_flag = True
             else:
                 img_flag = False
-        new_post =Post(
-                channel_id = id,
-                tg_post_id = messages[-1].id,
-                tg_data_post = messages[-1].date.replace(tzinfo=None) + datetime.timedelta(hours=3), # Московское время,
-                tg_text_post = messages[-1].text,
-                tg_participants_count = tg_participants_count,
-                img_flag = img_flag
-                )
+        new_post = create_new_post_all(id, messages, tg_participants_count, img_flag)
         loader_post_db(new_post)
         if img_flag == True:
             new_img = Img(post_id = new_post.id, img_path = os.path.join(PATH_IMG, str(id), str(messages[-1].id)))
