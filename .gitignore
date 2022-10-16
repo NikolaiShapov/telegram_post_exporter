@@ -131,3 +131,7 @@ dmypy.json
 #Nikolai
 ВОПРОСЫ ПО ПРОЕКТУ.txt
 Схема БД.jpg
+img_root/
+*.db
+*.session
+settings.py
