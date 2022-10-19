@@ -135,3 +135,5 @@ img_root/
 *.db
 *.session
 settings.py
+
+run.bat
