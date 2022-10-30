@@ -4,6 +4,11 @@ from wtforms.validators import DataRequired, Email, EqualTo, ValidationError #В
 
 from webapp.user.models import User
 
+
+class AddChannel(FlaskForm):
+    url_channel = StringField('Название канала', render_kw={"class": "form-control"})
+    submit_url = SubmitField('Добавить!', render_kw={"class":"btn btn-primary"})
+
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()], render_kw={"class": "form-control"}) #render_kw - добавка к полю при рендеринге
     #1 - Лейбл, 2 - можно сделать так: validators=[DataRequired()] и имейл валидатор

@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block content %}
+Контент юзерки 
+<div class="row">
+    <div class="col-5">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+        <form action="{{ url_for('user.process_add_ch') }}" method="POST">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+              {{ form.url_channel.label }}
+              {{ form.url_channel() }}
+          </div> 
+          {{ form.submit_url() }}
+      </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-5">
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Отметка</th>
+                    <th scope="col">#</th>
+                    <th scope="col">Канал</th>
+                    <th scope="col">Инфа</th>
+                    <th scope="col">Что-то</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><div class="form-check">
+                            <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                        </div>
+                    </td>
+                    <th scope="row">1</th>
+                    <td>1111</td>
+                    <td>1111</td>
+                    <td>1111</td>
+                  </tr>
+                  <tr>
+                    <td><div class="form-check">
+                            <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                        </div>
+                    </td>
+                    <th scope="row">2</th>
+                    <td>2222</td>
+                    <td>2222</td>
+                    <td>2222</td>
+                  </tr>
+                  <tr>
+                    <td><div class="form-check">
+                            <input class="form-check-input position-static" type="checkbox" id="blankCheckbox" value="option1" aria-label="...">
+                        </div>
+                    </td>
+                    <th scope="row">3</th>
+                    <td>3333</td>
+                    <td>3333</td>
+                    <td>3333</td>
+                  </tr>
+                </tbody>
+              </table>
+        <button type="button" class="btn btn-info">Очистить</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block">Очистить</button>
+    </div>
+
+    <div class="col-7">
+
+    </div>
+</div>
+{% endblock %}
