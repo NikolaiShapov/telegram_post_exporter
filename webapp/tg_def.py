@@ -13,8 +13,6 @@ client.start()
 def add_channel(url_channel):
     print(url_channel)
     channel = client.get_entity(url_channel)
-    # double_channel = db.session.query(Channel).filter((Channel.tg_channel_id==channel.id)).count()
-    # top_salary = Salary.query.filter(Salary.city == city_name).order_by(Salary.salary.desc())
     double_channel = Channel.query.filter(Channel.tg_channel_id==channel.id).count()
     if double_channel == 0:
         new_add_channel =Channel(
