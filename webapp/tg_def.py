@@ -1,63 +1,57 @@
 from telethon.sync import TelegramClient
 from telethon import functions, types
 from telethon.tl.patched import MessageService
-from webapp.config import PATH_IMG
-from webapp.settings import API_HASH, API_ID
-from webapp.user.models import db, Post, Img, User, User_channel, Channel
+from config import PATH_IMG
+from settings import API_HASH, API_ID
+from models_copy import Channel
+from db_tg import db_session as db
 import datetime, time
 import os
 
-import asyncio
+client = TelegramClient('+79811447016', API_ID, API_HASH)
+client.start()
 
-
-def client():
-    client = TelegramClient('+79811447016', API_ID, API_HASH)
-    return client.start()
-
-
-async def add_channel(url_channel):
-    channel = await client.get_entity(url_channel)
-    double_channel = db.session.query(Channel).filter((Channel.tg_channel_id==channel.id)).count()
+def add_channel(url_channel):
+    print(url_channel)
+    channel = client.get_entity(url_channel)
+    # double_channel = db.session.query(Channel).filter((Channel.tg_channel_id==channel.id)).count()
+    # top_salary = Salary.query.filter(Salary.city == city_name).order_by(Salary.salary.desc())
+    double_channel = Channel.query.filter(Channel.tg_channel_id==channel.id).count()
     if double_channel == 0:
         new_add_channel =Channel(
             tg_channel_id = channel.id,
             tg_channel_title = channel.title,
             tg_channel_username = channel.username
             )
-        db.session.add(new_add_channel)#, return_defaults=True)
-        db.session.commit()
+        db.add(new_add_channel)#, return_defaults=True)
+        db.commit()
         return new_add_channel.id #"Add сhannel!"
     else:
         return get_channel_id_bd(channel.id) #"Сhannel already exists!"
 
-
-async def get_channel_id_bd(channel_id):
+def get_channel_id_bd(channel_id):
     channel_id_bd = db.session.query(Channel).filter(Channel.tg_channel_id==channel_id).first()
     return channel_id_bd.id
 
-
-async def get_user_id_bd(user_email):
+def get_user_id_bd(user_email):
     user_id_bd = db.session.query(User).filter(User.email==user_email).first()
     return user_id_bd.id
 
-
-async def is_channel_db_user(user_id, channel_id):
+def is_channel_db_user(user_id, channel_id):
     is_user_channel = db.session.query(User_channel).filter(User_channel.user_id==user_id, User_channel.channel_id == channel_id).count()
     if is_user_channel == 0:
         return True
     else:
         False
 
-
-async def max_channel_user(user_id):
+def max_channel_user(user_id):
     count_user_channel = db.session.query(User_channel).filter(User_channel.user_id==user_id, User_channel.is_delete == True).all()
     if len(count_user_channel) < 20:
         return True
     else:
         return False
 
-
-async def add_user_channel(user_id, channel_id):
+def add_user_channel(user_id, channel_id):
     if is_channel_db_user(user_id, channel_id):
         if max_channel_user(user_id):
             new_user_channel = User_channel(
@@ -73,8 +67,7 @@ async def add_user_channel(user_id, channel_id):
     else:
         return update_del_true(user_id, channel_id)
 
-
-async def update_del_true(user_id, channel_id):
+def update_del_true(user_id, channel_id):
     update_del = db.session.query(User_channel).filter(User_channel.user_id==user_id, User_channel.channel_id == channel_id).first()
     print(update_del.is_delete)
     if update_del.is_delete:
@@ -86,25 +79,25 @@ async def update_del_true(user_id, channel_id):
         return 'Восстановили!'
 
 
-async def del_user_channel(user_id, url_channel):
-    channel = await client.get_entity(url_channel)
-    id_db_channel = await get_channel_id_bd(channel.id)
+def del_user_channel(user_id, url_channel):
+    channel = client.get_entity(url_channel)
+    id_db_channel = get_channel_id_bd(channel.id)
     update_del = db.session.query(User_channel).filter(User_channel.user_id==user_id, User_channel.channel_id == id_db_channel).first()
     update_del.is_delete = False
     db.session.add(update_del)
     db.session.commit()
 
-async def participants_count_Channel(id_Channel):
-    full_info = await client(functions.channels.GetFullChannelRequest(channel=int(f'-100{id_Channel}')))
+def participants_count_Channel(id_Channel):
+    full_info = client(functions.channels.GetFullChannelRequest(channel=int(f'-100{id_Channel}')))
     return(full_info.full_chat.participants_count) # количество подписчиков канала
 
-async def parser_post_channel(list_id_Channel):
+def parser_post_channel(list_id_Channel):
     for id in list_id_Channel:
         messages = []
         grouped_id = []
-        channel = await client.get_entity(int(f'-100{id}')) # получаем канал по ID (к id канала надо дописать -100)
-        tg_participants_count = await participants_count_Channel(id)
-        for message in await client.iter_messages(channel,limit=30):
+        channel = client.get_entity(int(f'-100{id}')) # получаем канал по ID (к id канала надо дописать -100)
+        tg_participants_count = participants_count_Channel(id)
+        for message in client.iter_messages(channel,limit=30):
             # print(message.stringify())
             if len(grouped_id) > 0 and isinstance(message, MessageService):
                 loader_posts(messages, tg_participants_count, id)
@@ -137,7 +130,7 @@ async def parser_post_channel(list_id_Channel):
             if message.grouped_id is None: #обрабатываем "простые" посты
                 loader_post(message, tg_participants_count, id)
 
-async def loader_post(message, tg_participants_count, id):
+def loader_post(message, tg_participants_count, id):
     double = db.session.query(Post).filter(Post.tg_post_id==message.id, Post.channel_id==id).count()
     if double == 0:
         img_flag = False
@@ -157,7 +150,7 @@ async def loader_post(message, tg_participants_count, id):
         else:
             db.session.commit()
 
-async def create_new_post_one(id, message, tg_participants_count, img_flag):
+def create_new_post_one(id, message, tg_participants_count, img_flag):
     new_post =Post(
             channel_id = id,
             tg_post_id = message.id,
@@ -167,7 +160,7 @@ async def create_new_post_one(id, message, tg_participants_count, img_flag):
             img_flag = img_flag)
     return new_post
 
-async def create_new_post_all(id, messages, tg_participants_count, img_flag):
+def create_new_post_all(id, messages, tg_participants_count, img_flag):
     #Практика показала, что тест поста не всегдна храниться в последнем элемента ВСЕГО поста.
     #По этому собираем текст по всем элемента поста
     texts = ''
@@ -183,7 +176,7 @@ async def create_new_post_all(id, messages, tg_participants_count, img_flag):
             )
     return new_post
 
-async def loader_posts(messages, tg_participants_count, id):
+def loader_posts(messages, tg_participants_count, id):
     double = db.session.query(Post).filter((Post.tg_post_id==messages[-1].id and Post.channel_id==id)).count()
     if double == 0:
         for mess in messages:
@@ -205,16 +198,18 @@ async def loader_posts(messages, tg_participants_count, id):
         else:
             db.session.commit()
 
-async def loader_post_db(new_post):
+def loader_post_db(new_post):
     db.session.add(new_post)
     db.session.flush()
     print('+1')
 
-async def loader_img_db(new_img):
+def loader_img_db(new_img):
     db.session.add(new_img)
     db.session.commit()
 
 
 if __name__ == "__main__":
-    posts = parser_post_channel((1378813139,))
-    
+    # posts = parser_post_channel((1378813139,))
+    # channel_id_db = add_channel('https://t.me/bazabazon')
+    # print(add_user_channel(2, channel_id_db))
+    pass
