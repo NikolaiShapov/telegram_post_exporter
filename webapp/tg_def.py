@@ -1,10 +1,9 @@
 from telethon.sync import TelegramClient
 from telethon import functions, types
 from telethon.tl.patched import MessageService
-from config import PATH_IMG
-from settings import API_HASH, API_ID
-from models_copy import Channel
-from db_tg import db_session as db
+from webapp.config import PATH_IMG
+from webapp.settings import API_HASH, API_ID
+from webapp.user.models import db, Post, Img, User, User_channel, Channel
 import datetime, time
 import os
 
