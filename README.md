@@ -12,7 +12,7 @@ API_HASH = ''
 Вводим телефон и ждем код подтверждения на родном клиенте телеграма. Он довольно длинный (12 символов) и неудобный для ввода.
 Заходим в пункт "API". Ищем "Telegram API" и заходим в "Creating an application" (https://my.telegram.org/apps).
 Заполняем поля App title и Short name, нажимаем «Create application» и запоминаем две переменные: api_id и api_hash.
-2. В файле tg_def.py в папке webapp указать номер теелфона в строке:
+2. В файле tg_def.py в папке webapp указать название сессии в строке:
 client = TelegramClient('session_name', API_ID, API_HASH)
 session_name — можно вставить любое имя. Вас попросят ввести телефон и пришлют код подтверждения. После этого клиент будет работать без запроса телефона (до тех пор, пока не поменяете session_name). Рядом с вашей программой появится файл session_name.session
 3. Запустить проект командой set FLASK_APP=webapp && set FLASK_ENV=development && set FLASK_DEBUG=1 && flask run
