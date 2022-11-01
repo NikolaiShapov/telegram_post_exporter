@@ -132,8 +132,4 @@ dmypy.json
 ВОПРОСЫ ПО ПРОЕКТУ.txt
 Схема БД.jpg
 img_root/
-*.db
 *.session
-settings.py
-
-run.bat

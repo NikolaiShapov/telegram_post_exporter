@@ -1,0 +1,19 @@
+Настройки Ubuntu
+
+sudo apt install telegram-desktop
+
+sudo apt update 
+sudo apt upgrade
+sudo apt install python3.10-pip 
+sudo apt install python3.10-venv
+
+
+sudo apt install git
+git config --global user.name "Vladimir Filonov"
+git config --global user.email vf@python.ru
+        
+Visual Studio Code on Linux
+Качаем с сайта и ставим архив командой
+sudo apt install ./<name_file>.deb
+Установить Python от Microsoft
+

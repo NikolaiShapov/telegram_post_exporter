@@ -8,6 +8,9 @@ from webapp.user.forms import LoginForm, RegistrationForm, AddChannel
 from webapp.user.models import User
 from webapp.tg_def import parser_post_channel, add_channel, add_user_channel, del_user_channel
 
+# from celery import Celery
+# celery_app = Celery('views', broker='redis://localhost:6379/0')
+
 blueprint = Blueprint('user', __name__, url_prefix='/users')
 
 @blueprint.route('/login')
@@ -17,7 +20,6 @@ def login():
     title = "Авторизация"
     login_form = LoginForm() # Создался экземпляр логина
     return render_template('user/login.html', page_title=title, form=login_form)
-
 
 
 @blueprint.route('/process-login', methods = ['POST']) #По умолчанию route обрабатывает только метод get. Мы хотим только метод POST
@@ -41,7 +43,7 @@ def process_login():
 def user_ch():
     title = "Приветик, красавчик"
     form = AddChannel()
-    return render_template('user./user.html', first=title, form=form)
+    return render_template('user/user.html', first=title, form=form)
 
 
 

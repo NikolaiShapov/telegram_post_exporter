@@ -7,12 +7,13 @@ from webapp.user.models import db, Post, Img, User, User_channel, Channel
 import datetime, time
 import os
 
-client = TelegramClient('+79811447016', API_ID, API_HASH)
-client.start()
+def client():
+    client = TelegramClient('+79811447016', API_ID, API_HASH)
+    return client.start()
 
 def add_channel(url_channel):
     print(url_channel)
-    channel = client.get_entity(url_channel)
+    channel = client().get_entity(url_channel)
     double_channel = Channel.query.filter(Channel.tg_channel_id==channel.id).count()
     if double_channel == 0:
         new_add_channel =Channel(
