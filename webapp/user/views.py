@@ -6,12 +6,42 @@ from flask_login import current_user, login_user, logout_user
 from webapp import db
 from webapp.user.forms import LoginForm, RegistrationForm, AddChannel
 from webapp.user.models import User
-from webapp.tg_def import parser_post_channel, add_channel, add_user_channel, del_user_channel
-
-# from celery import Celery
-# celery_app = Celery('views', broker='redis://localhost:6379/0')
+# from webapp.tg_def import parser_post_channel, add_channel, add_user_channel, del_user_channel
+# from webapp.tasks import add_channel
+from subprocess import check_output
 
 blueprint = Blueprint('user', __name__, url_prefix='/users')
+
+@blueprint.route('/user_ch')
+def user_ch():
+    title = "Приветик, красавчик"
+    form = AddChannel()
+    return render_template('user/user.html', first=title, form=form)
+
+@blueprint.route('/process-add-ch', methods=['POST'])
+def process_add_ch():
+    form = AddChannel()
+    if form.validate_on_submit():
+        try:
+            if form.submit_add.data:
+                status_command = check_output(f'python tg_tasks.py {form.url_channel.data} add_channel'.split(), encoding = 'utf-8')
+            elif form.submit_del.data:
+                status_command = check_output(f'python tg_tasks.py {form.url_channel.data} del_user_channel'.split(), encoding = 'utf-8')
+            print(status_command)
+            status_command = status_command.strip().split('\n')[-1]
+            flash(f'Статус: {status_command}!')
+            return redirect(url_for('user.user_ch'))
+        except:
+            flash(f'Ошибка! Введено некорректное название Канала!')
+            return redirect(url_for('user.user_ch'))
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
+    flash('Пожалуйста, исправьте ошибки в форме')
+    return redirect(url_for('user.user_ch'))
+
+
 
 @blueprint.route('/login')
 def login():
@@ -35,33 +65,6 @@ def process_login():
 
     flash('Неправильное имя или пароль')
     return redirect(url_for('user.login'))
-
-
-
-
-@blueprint.route('/user_ch')
-def user_ch():
-    title = "Приветик, красавчик"
-    form = AddChannel()
-    return render_template('user/user.html', first=title, form=form)
-
-
-
-@blueprint.route('/process-add-ch', methods=['POST'])
-def process_add_ch():
-    form = AddChannel()
-    if form.validate_on_submit():
-        channel_id_db = add_channel(form.url_channel.data) # Необходима проверка корректности ввода данных названия канала
-        flash(f'Добавляем канал {channel_id_db}!')
-        return redirect(url_for('user.user_ch'))
-    else:
-        for field, errors in form.errors.items():
-            for error in errors:
-                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
-    flash('Пожалуйста, исправьте ошибки в форме')
-    return redirect(url_for('user.user_ch'))
-
-
 
 
 @blueprint.route('/logout')

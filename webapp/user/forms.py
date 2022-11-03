@@ -7,7 +7,8 @@ from webapp.user.models import User
 
 class AddChannel(FlaskForm):
     url_channel = StringField('Название канала', render_kw={"class": "form-control"})
-    submit_url = SubmitField('Добавить!', render_kw={"class":"btn btn-primary"})
+    submit_add = SubmitField('Добавить!', render_kw={"class":"btn btn-primary btn-lg"})
+    submit_del = SubmitField('Удалить!', render_kw={"class":"btn btn-danger btn-lg"})
 
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()], render_kw={"class": "form-control"}) #render_kw - добавка к полю при рендеринге

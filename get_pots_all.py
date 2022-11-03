@@ -11,6 +11,6 @@ with app.app_context():
     # channel_id_db = add_channel('https://t.me/codeby_sec')
 
     channel_id_db = add_channel('https://t.me/bazabazon')
-    print(add_user_channel(2, channel_id_db))
+    # print(add_user_channel(2, channel_id_db))
 
     # del_user_channel(2, 'https://t.me/bazabazon')

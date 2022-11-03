@@ -16,10 +16,11 @@
         <form action="{{ url_for('user.process_add_ch') }}" method="POST">
           {{ form.hidden_tag() }}
           <div class="form-group">
-              {{ form.url_channel.label }}
-              {{ form.url_channel() }}
-          </div> 
-          {{ form.submit_url() }}
+            {{ form.url_channel.label }}
+            {{ form.url_channel() }}
+          <div class="text-center"> 
+            {{ form.submit_add() }}
+            {{ form.submit_del() }}
       </form>
     </div>
 </div>

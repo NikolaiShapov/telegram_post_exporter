@@ -17,3 +17,16 @@ Visual Studio Code on Linux
 sudo apt install ./<name_file>.deb
 Установить Python от Microsoft
 
+DB Browser for SQLite
+sudo apt-get install sqlitebrowser
+
+Команда выше изменит сочетание клавиш “Super-space” на “Alt+Shift”
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Alt>Shift_L', 'XF86Keyboard']"
+
+чтобы вернуть сочетание на стандартное, введите в терминале
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source "['<Super>space', 'XF86Keyboard']"
+
+VLC media player for Ubuntu
+sudo snap install vlc
+
+
