@@ -14,3 +14,5 @@ REMEMBER_COOKIE_DURATION = timedelta(days=5)
 #Это отключит функционал отправки сигнала приложению при изменениях в БД - мы не будем пользоваться им, 
 # т.к. он создает большую дополнительную нагрузку на приложение.
 SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+FOLDER_DOWNLOAD = os.path.join(basedir, '..', 'download')

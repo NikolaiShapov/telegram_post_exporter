@@ -5,7 +5,7 @@ from webapp.config import PATH_IMG
 from webapp.settings import API_HASH, API_ID
 from tg_db import db_session
 from tg_models import Post, Img, User, User_channel, Channel
-import datetime, time
+import datetime
 import os
 
 def participants_count_Channel(id_Channel):
@@ -17,9 +17,10 @@ def parser_post_channel(list_id_Channel):
         messages = []
         grouped_id = []
         channel = client.get_entity(int(f'-100{id}')) # получаем канал по ID (к id канала надо дописать -100)
+        # print(channel.megagroup)
         tg_participants_count = participants_count_Channel(id)
-        for message in client.iter_messages(channel,limit=30):
-            # print(message.stringify())
+        for message in client.iter_messages(channel,limit=500):
+            print(message.id)
             if len(grouped_id) > 0 and isinstance(message, MessageService):
                 loader_posts(messages, tg_participants_count, id)
                 messages = []
@@ -128,11 +129,19 @@ def loader_img_db(new_img):
     db_session.add(new_img)
     db_session.commit()
 
+def get_id_Channel():
+    list_id_Channel = []
+    id_table_channel = User_channel.query.filter((User_channel.is_delete != 0)).group_by(User_channel.channel_id).all()
+    for id in id_table_channel:
+        channel_id = Channel.query.filter(Channel.id==id.channel_id).first()
+        list_id_Channel.append(channel_id.tg_channel_id)
+    print(f'Кол. каналов для сбора информации:{len(list_id_Channel)}')
+    return(list_id_Channel)
+
 if __name__ == '__main__':
     client = TelegramClient('+79811447016', API_ID, API_HASH)
     client.start()
 
-    # Запросы к БД передать список ID
-    parser_post_channel((1378813139,))
-    # Как запускать (каждые 5 минут)? cron
+    list_id_Channel = get_id_Channel()
+    parser_post_channel((list_id_Channel))  # Как запускать (каждые 5 минут)? cron
     

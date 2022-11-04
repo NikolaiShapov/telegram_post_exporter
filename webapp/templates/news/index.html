@@ -2,7 +2,6 @@
 
 {% block content %}
     <div class="row">
-        <div class="col-8">
           {% with messages = get_flashed_messages() %}
           {% if messages %}
           <div class="alert alert-warning" role="alert">
@@ -12,25 +11,18 @@
           </div>
           {% endif %}
           {% endwith %}
-          <h2>Новости</h2>
-            <ul> <!--Если их убрать, то список выравняется с заголовком (если в контейнере)-->
-              <li>Строка один (что-то)</li>
-              <div class="w-50 p-2" style="background-color: rgb(135, 131, 187);">Строчечка цветная</div>
-              <li>Строка два (что-то)</li>
-              <div class="w-50 p-2" style="background-color: rgb(72, 143, 110);">Строчечка зелененькая</div>
-              <li>Строка три что-то</li>
-              <div class="w-50 p-2" style="background-color: rgb(195, 162, 162);">Строчечка еще в цвете</div>
-              <li>Строка n (что-то)</li>
-              <div class="w-50 p-2" style="background-color: rgb(130, 122, 122);">Темная строчечка</div>
-            </ul>
-        </div>
-        <div class="col-4">
-            <div class="container">
-              <a class="navbar-brand" href="#">
-                <img src="https://cs13.pikabu.ru/post_img/big/2020/06/11/5/1591857273183626976.jpg" alt="Bootstrap" width="310" height="350">
-              </a>
+          <p></p>
+          <center><h5 align="justify">Это web-приложение для сбора постов телеграм-каналов и экспорт текста постов в формате: txt, csv, pdf
+            (с фото к постам). Пользователь вводит название телеграм-каналов (максимум 20) для отслеживания постов. 
+            Также пользователь может выбрать период сбора постов телеграм-каналов и получать в ответ собранные данные в трех форматах. 
+            Если поставить галочку "комментарии", дополнительно выгружаются комментарии к постам.</h5></center>
+            <div class="col-12">
+              <div style="height: 20px;"></div>
+              <center><h2>Статистика сайта. </h2>
+              <div style="height: 20px;"></div>
+              <h4>Всего пользователей: {{ users }}</h4>
+              <h4>Всего отслеживаемых каналов: {{ channels }}</h4>
+              <h4>Всего постов: {{ posts }}</h4></center>
             </div>
-          </nav>
-        </div>
     </div>
 {% endblock %}

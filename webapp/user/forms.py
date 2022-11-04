@@ -6,9 +6,20 @@ from webapp.user.models import User
 
 
 class AddChannel(FlaskForm):
-    url_channel = StringField('Название канала', render_kw={"class": "form-control"})
-    submit_add = SubmitField('Добавить!', render_kw={"class":"btn btn-primary btn-lg"})
-    submit_del = SubmitField('Удалить!', render_kw={"class":"btn btn-danger btn-lg"})
+    url_channel = StringField('Введите название канала:', render_kw={"class": "form-control form-control-lg", "placeholder": "https://t.me/bazabazon"})
+    submit_add = SubmitField('Добавить!', render_kw={"class":"btn btn-primary btn-lg btn-block"})
+    submit_del = SubmitField('Удалить!', render_kw={"class":"btn btn-danger btn-lg btn-block"})
+    day_count = StringField('Введите количество дней:', render_kw={"class": "form-control form-control-lg", "placeholder": "За сколько дней?"})
+    submit_download_txt = SubmitField('Скачать Txt', render_kw={"class": "btn btn-success btn-lg btn-block"})
+    submit_download_csv = SubmitField('Скачать Csv', render_kw={"class": "btn btn-secondary btn-lg btn-block"})
+    submit_download_pdf = SubmitField('Скачать Pdf', render_kw={"class": "btn btn-warning btn-lg btn-block"})
+    search = StringField('Поиск в базе постов:', render_kw={"class": "form-control form-control-lg", "placeholder": "Ваш запрос"})
+    search_day = StringField('Поиск в базе постов:', render_kw={"class": "form-control form-control-lg", "placeholder": "За сколько дней?"})
+    submit_search = SubmitField('Поиск', render_kw={"class": "btn btn-secondary btn-lg btn-block"})
+
+
+# class Download(FlaskForm):
+#     submit_download = StringField('Название канала', render_kw={"class": "btn btn-success btn-lg"})
 
 class LoginForm(FlaskForm):
     username = StringField('Имя пользователя', validators=[DataRequired()], render_kw={"class": "form-control"}) #render_kw - добавка к полю при рендеринге

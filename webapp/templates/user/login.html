@@ -3,6 +3,8 @@
 {% block content %}
     <div class="row">
         <div class="col-4">
+        </div>
+        <div class="col-4">
             {% with messages = get_flashed_messages() %}
                 {% if messages %}
                 <div class="alert alert-warning" role="alert">
@@ -27,10 +29,9 @@
                     {{ form.remember_me.label(class_='form-check-label') }}
                 </div>
                 {{ form.submit() }}
+                <div class="col-4">
+                </div>
             </form>
-        </div>
-        <div class="col-8">
-            
         </div>
     </div>
 {% endblock %}

@@ -26,7 +26,7 @@ class Channel(Base):
     tg_channel_username =Column(String, nullable=False)
 
     def __repr__(self) -> str:
-        return f'News {self.tg_channel_id}, {self.tg_channel_title}'
+        return f'{self.tg_channel_id},{self.tg_channel_title}'
 
 class Post(Base):
     __tablename__ = "posts"
@@ -39,7 +39,7 @@ class Post(Base):
     img_flag = Column(Boolean, nullable=False)
 
     def __repr__(self) -> str:
-        return f'News {self.channel_id}, {self.tg_post_id}, {self.tg_text_post}'
+        return f'{self.channel_id},{self.tg_post_id},{self.tg_text_post}'
 
 class User_channel(Base):
     __tablename__ = "user_channels"
@@ -51,7 +51,7 @@ class User_channel(Base):
     is_delete = Column(Boolean, nullable=False)
 
     def __repr__(self) -> str:
-        return f'News {self.user_id}, {self.channel_id}'
+        return f'{self.user_id},{self.channel_id}'
 
 class Keyword(Base):
     __tablename__ = "keywords"
@@ -60,7 +60,7 @@ class Keyword(Base):
     keyword = Column(String, nullable=False)
 
     def __repr__(self) -> str:
-        return f'News {self.user_id}, {self.keyword}'
+        return f'{self.user_id},{self.keyword}'
 
 class Keyword_post(Base):
     __tablename__ = "keyword_posts"
@@ -69,7 +69,7 @@ class Keyword_post(Base):
     post_id = Column(Integer, nullable=False)
 
     def __repr__(self) -> str:
-        return f'News {self.keyword_id}, {self.post_id}'
+        return f'{self.keyword_id},{self.post_id}'
 
 class Img(Base):
     __tablename__ = "imgs"
@@ -78,4 +78,4 @@ class Img(Base):
     img_path = Column(String, nullable=False)
 
     def __repr__(self) -> str:
-        return f'News {self.post_id}, {self.img_path}'
+        return f'{self.post_id},{self.img_path}'

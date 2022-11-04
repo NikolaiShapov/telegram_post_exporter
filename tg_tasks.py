@@ -1,3 +1,4 @@
+from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.sync import TelegramClient
 from telethon import functions, types
 from telethon.tl.patched import MessageService
@@ -10,6 +11,9 @@ import sys
 def add_channel(url_channel):
     print(url_channel)
     channel = client.get_entity(url_channel)
+    if channel.megagroup:
+        print('Можно добавлять только Каналы!')
+        return 'Можно добавлять только Каналы!'
     print('db run...')
     double_channel = Channel.query.filter(Channel.tg_channel_id==channel.id).count()
     if double_channel == 0:
@@ -21,6 +25,7 @@ def add_channel(url_channel):
         db_session.add(new_add_channel)#, return_defaults=True)
         db_session.commit()
         print(channel.id, channel.title, channel.username)
+        add_channel_in_telegram(channel.username)
         return new_add_channel.id #"Add сhannel!"
     else:
         return get_channel_id_bd(channel.id) #"Сhannel already exists!"
@@ -32,6 +37,10 @@ def get_channel_id_bd(channel_id):
 def get_user_id_bd(user_email):
     user_id_bd = User.query.filter(User.email==user_email).first()
     return user_id_bd.id
+
+def add_channel_in_telegram(username):
+    client(JoinChannelRequest(username))
+    print(f'JoinChannelRequest:{username}')
 
 def is_channel_db_user(user_id, channel_id):
     is_user_channel = User_channel.query.filter(User_channel.user_id==user_id, User_channel.channel_id == channel_id).count()
@@ -91,14 +100,18 @@ if __name__ == "__main__":
     print(sys.argv)
     command = sys.argv[-1]
     channels = sys.argv[-2]
+    id_user = sys.argv[-3]
     print(f'command: {command}')
 
     if command == 'add_channel':
+        #Нужна проверка что это именно группа!
         channel_id_db = add_channel(channels)
-        result = add_user_channel(2, channel_id_db)
-        print(result)
+        if type(channel_id_db) is int:
+            print('Добавляем канал...')
+            result = add_user_channel(id_user, channel_id_db)
+            print(result)
     elif command == 'del_user_channel':
-        result = del_user_channel(2, channels)
+        result = del_user_channel(id_user, channels)
         print(result)
     else:
         print('Error command!')
