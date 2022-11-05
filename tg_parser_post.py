@@ -19,7 +19,7 @@ def parser_post_channel(list_id_Channel):
         channel = client.get_entity(int(f'-100{id}')) # получаем канал по ID (к id канала надо дописать -100)
         # print(channel.megagroup)
         tg_participants_count = participants_count_Channel(id)
-        for message in client.iter_messages(channel,limit=500):
+        for message in client.iter_messages(channel,limit=100):
             print(message.id)
             if len(grouped_id) > 0 and isinstance(message, MessageService):
                 loader_posts(messages, tg_participants_count, id)
