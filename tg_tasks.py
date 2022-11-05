@@ -104,7 +104,6 @@ if __name__ == "__main__":
     print(f'command: {command}')
 
     if command == 'add_channel':
-        #Нужна проверка что это именно группа!
         channel_id_db = add_channel(channels)
         if type(channel_id_db) is int:
             print('Добавляем канал...')

@@ -18,7 +18,6 @@ blueprint = Blueprint('user', __name__, url_prefix='/users')
 def user_ch():
     title = "Личный кабинет."
     form = AddChannel()
-    print(f'user = {current_user}')
     your_channels = get_list_show_tg_channel_username(f'{current_user.id}')
     your_channels.sort()
 
@@ -40,18 +39,18 @@ def process_add_ch():
                 return redirect(url_for('user.user_ch')) 
         if form.submit_search.data:
             try:
-                if form.search.data == '':
+                if form.search.data == '' or form.search_day.data == '' :
                     raise ('Пуйсто запрос')
+                else:
                 # 1. запросить группы на которые подписан
                 # 2. собирет все посты этих групп с проверкой искомого слова(фразы)
                 # 3. создать файл
+                    filename = find(f'{current_user.id}', f'{form.search.data}', f'{form.search_day.data}')
+                    safe_path = os.path.join(current_app.config["FOLDER_DOWNLOAD"], filename)
+                    print(f'Отправляем файл {safe_path}')
+                    return send_file(safe_path, as_attachment=True, mimetype='text/csv')
                 # 4. Вывести информацию сколько постов найдено
                 # 5. Вывести скнопку скачать
-                # filename = create_report_posts(f'{current_user.id}', f'{form.day_count.data}')
-                # print(filename)
-                # safe_path = os.path.join(current_app.config["FOLDER_DOWNLOAD"], filename)
-                # print(f'Отправляем файл {safe_path}')
-                # return send_file(safe_path, as_attachment=True, mimetype='text/csv')
             except:
                 flash(f'Ошибка! Поля не заполнены либо что то еще ...!')
                 return redirect(url_for('user.user_ch')) 
