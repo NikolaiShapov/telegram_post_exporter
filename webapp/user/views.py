@@ -5,6 +5,7 @@ from flask_login import current_user, login_user, logout_user
 
 from flask import send_file
 from tg_downloan import create_report_posts, get_list_show_tg_channel_username
+from tg_search import find
 from webapp import db
 from webapp.user.forms import LoginForm, RegistrationForm, AddChannel
 from webapp.user.models import User, Channel, Post, User_channel
